@@ -29,8 +29,12 @@ func main() {
 
 	router := mux.NewRouter()
 	router.HandleFunc("/auth/login", controller.RenderLogin).Methods("GET")
+	router.HandleFunc("/auth/login", controller.Login).Methods("POST")
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./resources/public"))))
+
 	adminRouter := router.PathPrefix("/admin").Subrouter()
 	adminRouter.Use(middleware.Admin)
+	adminRouter.HandleFunc("/dashboard", controller.RenderDashboard).Methods("GET")
 
 	compressed := handlers.CompressHandler(router)
 	loggedRouter := handlers.LoggingHandler(os.Stdout, compressed)

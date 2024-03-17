@@ -1,26 +1,75 @@
 package controllers
 
 import (
-	"fmt"
+	"github.com/go-playground/validator/v10"
+	"github.com/gorilla/csrf"
+	"github.com/gorilla/schema"
 	"net/http"
+	"os"
+	"time"
+	"umy/requests"
+	"umy/services"
+	"umy/templates"
 )
 
+var decoder = schema.NewDecoder()
+var validate = validator.New(validator.WithRequiredStructEnabled())
+
 func (c *Controller) RenderLogin(w http.ResponseWriter, r *http.Request) {
-	_, err := fmt.Fprint(w, "Login page")
+	login := templates.Login(csrf.Token(r))
+	err := login.Render(r.Context(), w)
 	if err != nil {
 		c.HandleServerError(w, err)
 	}
-	//parsedTemplate, err := template.ParseFiles("templates/login.tmpl")
-	//if err != nil {
-	//	log.Printf("Error occured while executing the template or writing its output : %v", err)
-	//	return
-	//}
-	//
-	//err = parsedTemplate.Execute(w, map[string]interface{}{
-	//	csrf.TemplateTag: csrf.TemplateField(r),
-	//})
-	//if err != nil {
-	//	log.Printf("Error occured while executing the template or writing its output : %v", err)
-	//	return
-	//}
+}
+
+func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		c.HandleServerError(w, err)
+	}
+
+	r.PostForm.Del("gorilla.csrf.Token")
+
+	var loginRequest requests.Login
+	err = decoder.Decode(&loginRequest, r.PostForm)
+	if err != nil {
+		c.HandleServerError(w, err)
+	}
+
+	err = validate.Struct(loginRequest)
+	if err != nil {
+		c.HandleServerError(w, err)
+	}
+
+	adminEmail := os.Getenv("ADMIN_EMAIL")
+	adminPass := os.Getenv("ADMIN_PASS")
+	if loginRequest.Email == adminEmail && loginRequest.Password == adminPass {
+		token, err := services.GenerateJwt()
+		if err != nil {
+			c.HandleServerError(w, err)
+		}
+
+		cookie := &http.Cookie{
+			Name:     "accessToken",
+			Value:    token,
+			Path:     "/",
+			HttpOnly: true,
+			Secure:   true,
+			SameSite: http.SameSiteStrictMode,
+		}
+		if loginRequest.RememberMe {
+			cookie.Expires = time.Now().Add(24 * time.Hour)
+		}
+		http.SetCookie(w, cookie)
+
+		http.Redirect(w, r, "/admin/dashboard", http.StatusFound)
+		return
+	}
+
+	http.Error(w, "Invalid email/password", http.StatusUnprocessableEntity)
+}
+
+func (c *Controller) RenderDashboard(w http.ResponseWriter, r *http.Request) {
+
 }

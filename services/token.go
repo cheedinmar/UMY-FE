@@ -7,16 +7,15 @@ import (
 	"time"
 )
 
-func GenerateJwt(userId string) (string, error) {
+func GenerateJwt() (string, error) {
 	tokenBytes, err := os.ReadFile("./cert/id_rsa")
 	if err != nil {
 		return "", err
 	}
 	claims := jwt.MapClaims{
-		"iss":     os.Getenv("APP_NAME"),
-		"iat":     time.Now().Unix(),
-		"exp":     time.Now().Add(24 * time.Hour).Unix(),
-		"user_id": userId,
+		"iss": os.Getenv("APP_NAME"),
+		"iat": time.Now().Unix(),
+		"exp": time.Now().Add(24 * time.Hour).Unix(),
 	}
 
 	privateKey, err := jwt.ParseRSAPrivateKeyFromPEM(tokenBytes)

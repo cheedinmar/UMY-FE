@@ -1,0 +1,18 @@
+package templates
+
+templ Layout(pageTitle string) {
+    <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>{ pageTitle } - Attendlog</title>
+            <link rel="stylesheet" href="/static/css/index.css" />
+        </head>
+        <body class="font-inter">
+            { children... }
+            <script src="/static/js/eye-slash.js"></script>
+            <script src="/static/js/flash.js"></script>
+        </body>
+        </html>
+}

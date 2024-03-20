@@ -1,0 +1,16 @@
+package components
+
+templ TextInput(title, placeholder string) {
+    <fieldset class="form-control w-full">
+        <label for={title} class="label">
+            <span class="label-text">{title}</span>
+        </label>
+        <input
+            name={title}
+            id={title}
+            type="text"
+            placeholder={placeholder}
+            class="input input-bordered w-full"
+        />
+    </fieldset>
+}

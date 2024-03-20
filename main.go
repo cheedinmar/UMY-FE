@@ -35,6 +35,7 @@ func main() {
 	adminRouter := router.PathPrefix("/admin").Subrouter()
 	adminRouter.Use(middleware.Admin)
 	adminRouter.HandleFunc("/dashboard", controller.RenderDashboard).Methods("GET")
+	adminRouter.HandleFunc("/media", controller.RenderMediaForm).Methods("GET")
 
 	compressed := handlers.CompressHandler(router)
 	loggedRouter := handlers.LoggingHandler(os.Stdout, compressed)

@@ -36,7 +36,7 @@ func Layout(pageTitle string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" - Attendlog</title><link rel=\"stylesheet\" href=\"/static/css/index.css\"></head><body class=\"font-inter\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" - Umy</title><link rel=\"stylesheet\" href=\"/static/css/index.css\"></head><body class=\"font-inter\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

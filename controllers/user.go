@@ -10,6 +10,7 @@ import (
 	"umy/requests"
 	"umy/services"
 	"umy/templates"
+	"umy/templates/pages"
 )
 
 var decoder = schema.NewDecoder()
@@ -71,5 +72,9 @@ func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) RenderDashboard(w http.ResponseWriter, r *http.Request) {
-
+	dash := pages.Dashboard()
+	err := dash.Render(r.Context(), w)
+	if err != nil {
+		c.HandleServerError(w, err)
+	}
 }

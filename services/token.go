@@ -78,9 +78,5 @@ func ValidateJwt(cToken string) (string, error) {
 		return "", fmt.Errorf("expired token")
 	}
 
-	userID, ok := claims["user_id"].(string)
-	if !ok {
-		return "", fmt.Errorf("validate: invalid token")
-	}
-	return userID, nil
+	return "", nil
 }
